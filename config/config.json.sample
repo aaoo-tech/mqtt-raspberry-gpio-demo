@@ -1,0 +1,7 @@
+{
+  "host": "some-domain-or-ip-address",
+  "port": 1883,
+  "uuid": "a-specified-unique-id",
+  "username": "",
+  "password": ""
+}
