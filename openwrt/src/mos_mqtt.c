@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include <mosquitto.h>
+#include "json.h"
 
 #define mqtt_host "iot.aaoo-tech.com"
 #define mqtt_port 1883
@@ -15,14 +16,15 @@ void connect_callback(struct mosquitto *mosq, void *obj, int result) {
 }
 
 void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
-  bool match = 0;
-  printf("got message '%.*s' for topic '%s'\n", message->payloadlen, (char*) message->payload, message->topic);
 
-  mosquitto_topic_matches_sub("/devices/wb-adc/controls/+", message->topic, &match);
-  if (match) {
-    printf("got message for ADC topic\n");
-  }
+  char* message_content = (char *) message->payload;
+  json_char* json = (json_char *) message_content;
+  json_value* value = json_parse(json, message->payloadlen);
 
+  char* action = value->u.object.values[0].value->u.string.ptr;
+  printf("%s\n", action);
+
+  json_value_free(value);
 }
 
 int main(int argc, char* argv[]) {
